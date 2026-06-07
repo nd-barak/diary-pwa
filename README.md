@@ -1,133 +1,146 @@
 # 🔒 S-Diary — Secure Journal
 
-> Journal intime **chiffré de bout en bout**, synchronisé dans le cloud et utilisable **hors-ligne**.
+> A **end-to-end encrypted** personal diary, synced to the cloud and fully **offline-ready**.
 
 ![PWA](https://img.shields.io/badge/PWA-ready-blue)
-![Chiffrement](https://img.shields.io/badge/Chiffrement-AES--GCM%20256bit-green)
+![Encryption](https://img.shields.io/badge/Encryption-AES--GCM%20256bit-green)
 ![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E)
-![Licence](https://img.shields.io/badge/Licence-MIT-yellow)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- 🔐 **Chiffrement AES-GCM 256 bits** — vos entrées sont chiffrées avant d'être sauvegardées. Personne ne peut les lire, même pas le serveur.
-- 🧂 **Dérivation PBKDF2 + SHA-512** — mot de passe maître protégé contre les attaques par force brute (600 000 itérations).
-- 👥 **Multi-comptes** — plusieurs utilisateurs peuvent coexister sur le même appareil.
-- ☁️ **Synchronisation Supabase** — sauvegardez et restaurez vos données chiffrées depuis n'importe quel appareil.
-- 📴 **Offline-first (PWA)** — fonctionne entièrement sans connexion internet.
-- 🔒 **Verrouillage automatique** — session fermée après 5 minutes d'inactivité.
-- 📤 **Export / Import JSON** — sauvegarde locale portable.
-
----
-
-## 🚀 Demo
-
-👉 **[Accéder à l'application](https://diary-pwa.vercel.app)**
+- 🔐 **AES-GCM 256-bit Encryption** — entries are encrypted before being saved. Nobody can read them, not even the server.
+- 🧂 **PBKDF2 + SHA-512 Key Derivation** — master password protected against brute-force attacks (600,000 iterations).
+- 👥 **Multi-account** — multiple users can coexist on the same device, each with their own isolated entries.
+- ☁️ **Supabase Cloud Sync** — save and restore your encrypted data from any device.
+- 📴 **Offline-first (PWA)** — works entirely without an internet connection thanks to the Service Worker.
+- 🔒 **Auto-lock** — session closes automatically after 5 minutes of inactivity.
+- 📤 **Export / Import JSON** — portable local backup of your encrypted data.
+- 💾 **IndexedDB Local Storage** — no unencrypted data ever goes through the network.
 
 ---
 
-## 🛠️ Technologies utilisées
+## 🚀 Live Demo
 
-| Technologie | Rôle |
+👉 **[Open the app](https://diary-pwa.vercel.app)**
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Role |
 |---|---|
-| **HTML / CSS / JS** | Interface utilisateur |
-| **Web Crypto API** | Chiffrement AES-GCM & PBKDF2 |
-| **IndexedDB** | Stockage local des données |
-| **Supabase** | Base de données cloud (PostgreSQL) |
-| **Service Worker** | Mode hors-ligne (PWA) |
-| **Vercel** | Hébergement |
+| **HTML / CSS / JS** | User interface |
+| **Web Crypto API** | AES-GCM encryption & PBKDF2 |
+| **IndexedDB** | Local data storage |
+| **Supabase** | Cloud database (PostgreSQL) |
+| **Service Worker** | Offline mode (PWA) |
+| **Vercel** | Hosting |
 
 ---
 
-## 📁 Structure du projet
+## 📁 Project Structure
 
 ```
 diary-pwa/
 ├── js/
-│   ├── crypto.js         # Moteur cryptographique (AES-GCM, PBKDF2)
-│   ├── db.js             # Gestion IndexedDB locale
-│   ├── auth.js           # Authentification multi-comptes + sync Supabase
-│   ├── sync.js           # Synchronisation cloud + export/import
-│   └── app.js            # Logique principale de l'interface
+│   ├── crypto.js         # Cryptographic engine (AES-GCM, PBKDF2)
+│   ├── db.js             # Local IndexedDB management
+│   ├── auth.js           # Multi-account auth + Supabase sync
+│   ├── sync.js           # Cloud sync + export/import
+│   └── app.js            # Main UI logic
 ├── styles/
-│   └── main.css          # Styles de l'application
+│   └── main.css          # App styles
 ├── prisma/
-│   └── schema.prisma     # Schéma de base de données
-├── index.html            # Interface principale
-├── manifest.json         # Configuration PWA
-├── sw.js                 # Service Worker (mode hors-ligne)
-├── prisma.config.ts      # Configuration Prisma
-├── package.json          # Dépendances Node.js
+│   └── schema.prisma     # Database schema
+├── index.html            # Main interface
+├── manifest.json         # PWA configuration
+├── sw.js                 # Service Worker (offline mode)
+├── prisma.config.ts      # Prisma configuration
+├── package.json          # Node.js dependencies
 └── .gitignore
 ```
 
 ---
 
-## ⚙️ Installation locale
+## ⚙️ Local Setup
 
-**1. Clonez le dépôt :**
+**1. Clone the repository:**
 ```bash
 git clone https://github.com/nd-barak/diary-pwa.git
 cd diary-pwa
 ```
 
-**2. Installez les dépendances :**
+**2. Install dependencies:**
 ```bash
 npm install
 ```
 
-**3. Configurez les variables d'environnement :**
+**3. Set up environment variables:**
 ```bash
 cp .env.example .env
-# Remplissez avec vos clés Supabase
+# Fill in your Supabase keys
 ```
 
-**4. Lancez localement :**
+**4. Run locally:**
 ```bash
 python -m http.server 8080
 ```
-Ouvrez `http://localhost:8080`
+Open `http://localhost:8080`
 
 ---
 
-## 🗄️ Structure de la base de données (Supabase)
+## 🗄️ Database Structure (Supabase)
 
 ### Table `users`
-| Colonne | Type | Description |
+| Column | Type | Description |
 |---|---|---|
-| `username` | text (PK) | Pseudonyme unique |
-| `salt` | text | Sel de dérivation PBKDF2 |
-| `validationIv` | text | IV de validation |
-| `validationData` | text | Données de validation chiffrées |
+| `username` | text (PK) | Unique username |
+| `salt` | text | PBKDF2 derivation salt |
+| `validationIv` | text | Validation IV |
+| `validationData` | text | Encrypted validation data |
 
 ### Table `entries`
-| Colonne | Type | Description |
+| Column | Type | Description |
 |---|---|---|
-| `id` | int8 (PK) | Identifiant (timestamp) |
-| `owner` | text | Pseudonyme du propriétaire |
-| `timestamp` | int8 | Date de création |
-| `titleIv` | text | IV du titre chiffré |
-| `titleData` | text | Titre chiffré |
-| `contentIv` | text | IV du contenu chiffré |
-| `contentData` | text | Contenu chiffré |
+| `id` | int8 (PK) | Identifier (timestamp) |
+| `owner` | text | Entry owner username |
+| `timestamp` | int8 | Creation date |
+| `titleIv` | text | Encrypted title IV |
+| `titleData` | text | Encrypted title |
+| `contentIv` | text | Encrypted content IV |
+| `contentData` | text | Encrypted content |
 
 ---
 
-## 🔐 Sécurité
+## 🔐 Security
 
-- Clé de déchiffrement stockée **uniquement en RAM**
-- Données envoyées à Supabase **déjà chiffrées**
-- **Row Level Security (RLS)** activé sur Supabase
-- Protection XSS sur toutes les injections HTML
-- Verrouillage automatique après inactivité
-
----
-
-## 📄 Licence
-
-MIT — libre d'utilisation et de modification.
+- Decryption key stored **in RAM only**, never persisted to disk
+- Data sent to Supabase is **already encrypted** — even Supabase cannot read your journal
+- **Row Level Security (RLS)** enabled on all Supabase tables
+- XSS protection on all HTML injections
+- Auto-lock after inactivity
 
 ---
 
-<p align="center">Fait avec ❤️ par <a href="https://github.com/nd-barak">nd-barak</a></p>
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the project
+2. Create a branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m "Add my feature"`)
+4. Push (`git push origin feature/my-feature`)
+5. Open a **Pull Request**
+
+---
+
+## 📄 License
+
+MIT — free to use and modify.
+
+---
+
+<p align="center">Made with ❤️ by <a href="https://github.com/nd-barak">nd-barak</a></p>
