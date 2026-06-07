@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>S-Diary | Secure Journal</title>
+    <meta name="description" content="A private, encrypted, offline-first diary.">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+
+    <!-- Écran d'authentification -->
+    <div id="auth-screen" class="screen flex-center">
+        <div class="glass-card">
+            <div class="auth-header">
+                <h1>S-Diary <span class="lock-icon">🔒</span></h1>
+                <p id="auth-subtitle">Accès à l'espace crypté</p>
+            </div>
+            <div class="auth-tabs">
+                <button type="button" id="tab-login" class="auth-tab active">Connexion</button>
+                <button type="button" id="tab-signup" class="auth-tab">S'inscrire</button>
+            </div>
+            <form id="auth-form" autocomplete="off">
+                <div class="input-group">
+                    <input type="text" id="auth-username" placeholder="Pseudonyme" required autofocus>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="master-password" placeholder="Mot de passe maître (min 8 car.)" required
+                        minlength="8">
+                </div>
+                <button type="submit" id="auth-submit" class="btn-primary">Déverrouiller</button>
+            </form>
+            <p id="auth-error" class="error-msg hidden">Identifiants incorrects.</p>
+        </div>
+    </div>
+
+    <!-- Interface Principale -->
+    <div id="app-screen" class="screen hidden">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <h2>Journal</h2>
+                <button id="btn-new-entry" class="icon-btn" title="Nouvelle entrée">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="entries-list" class="entries-list">
+                <!-- Les entrées seront générées ici -->
+            </div>
+            <div class="sidebar-footer">
+                <button id="btn-import" class="icon-btn text-small" title="Importer des données">⏫ Import</button>
+                <button id="btn-export" class="icon-btn text-small" title="Exporter les données">⏬ Export</button>
+                <button id="btn-sync-up" class="icon-btn text-small" title="Sauvegarder dans le cloud">☁️ Cloud Save</button>
+                <button id="btn-sync-down" class="icon-btn text-small" title="Restaurer depuis le cloud">🔄 Cloud Restore</button>
+                <button id="btn-lock" class="icon-btn text-small danger" title="Verrouiller">🔒 Verrouiller</button>
+            </div>
+        </aside>
+
+        <main id="editor">
+            <div id="editor-empty" class="flex-center fallback-msg">
+                <p>Sélectionnez une entrée ou créez-en une nouvelle.</p>
+            </div>
+            <div id="editor-active" class="hidden">
+                <header class="editor-header">
+                    <input type="text" id="entry-title" placeholder="Titre de l'entrée..." autocomplete="off">
+                    <button id="btn-save" class="btn-primary btn-small">Enregistrer</button>
+                    <button id="btn-delete" class="icon-btn danger" title="Supprimer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                        </svg>
+                    </button>
+                </header>
+                <div class="editor-body">
+                    <textarea id="entry-content" placeholder="Que s'est-il passé aujourd'hui ?..."></textarea>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Enregistrement simple du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW enregistré!', reg.scope))
+                    .catch(err => console.error('Erreur SW:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
